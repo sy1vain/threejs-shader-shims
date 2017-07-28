@@ -40,8 +40,9 @@
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 4 );
     camera.position.z = 1;
 
-    var renderer = new THREE.WebGLRenderer();
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
 
@@ -109,6 +110,9 @@
       // so we create custom materials for depth & distance and add the correct defines
       mesh.castShadow = true;
       mesh.receiveShadow = true;
+
+      //we don;t use colors hereafter, so remove it to prevent shader warnings
+      delete DEFINES.INSTANCING_USE_COLOR;
 
       { // there are multiple ways to do this, but I find the the easiest
         var depthMaterial = new THREE.MeshDepthMaterial({
