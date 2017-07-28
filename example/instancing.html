@@ -23,7 +23,7 @@
 
   <script>
 
-    var MAX_INSTANCES = 50;
+    var MAX_INSTANCES = 250;
     var DEFINES = {
       INSTANCING: true,
       INSTANCING_USE_POSITION: true,
@@ -156,6 +156,12 @@
 
     var stats = new Stats();
     document.body.appendChild( stats.domElement );
+
+    window.addEventListener( 'resize', function(){
+      camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+    }, false );
 
     function update(){
       if(quaternions){
