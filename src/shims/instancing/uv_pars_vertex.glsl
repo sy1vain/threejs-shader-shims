@@ -16,11 +16,12 @@
     #endif
   #endif
 
+  #ifdef USE_COLOR
   #ifdef INSTANCING_USE_COLOR
     attribute vec3 instanceColor;
     varying vec3 vInstanceColor;
   #endif
-
+  #endif
 
   mat3 inverse(mat3 m) {
 
