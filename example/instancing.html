@@ -96,7 +96,18 @@
         geometry.addAttribute( 'instanceColor', colors );
       }
 
-      var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+      // The following shaders (mostly) work)
+      // var material = new THREE.MeshBasicMaterial( {} );
+      // var material = new THREE.MeshDepthMaterial( {} );
+      // var material = new THREE.MeshDistanceMaterial( {} );
+      var material = new THREE.MeshLambertMaterial( {} );
+      // var material = new THREE.MeshNormalMaterial( {} );
+      // var material = new THREE.MeshPhongMaterial( {} );
+      // var material = new THREE.MeshPhysicalMaterial( {} );
+      // var material = new THREE.MeshStandardMaterial( {} );
+      // var material = new THREE.MeshToonMaterial( {} );
+      // var material = new THREE.ShadowMaterial( {} );
+
 
       // by defining the correct defines, the matreial will use instancing
       // using assign we re-use the original defiens, if any
