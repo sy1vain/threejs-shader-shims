@@ -4,9 +4,12 @@ export function all(THREE){
 
 export function instancing(THREE){
   shim(THREE, 'instancing', [
-    'begin_vertex'
-    ,'uv_pars_vertex'
-    ,'defaultnormal_vertex'
+    'begin_vertex',
+    'uv_pars_vertex',
+    'defaultnormal_vertex',
+    'color_fragment',
+    'color_pars_fragment',
+    'color_vertex'
   ]);
 }
 
@@ -24,7 +27,7 @@ function shim(THREE, type, shaders){
   if(isShimmed(THREE, type)) return;
 
   shaders.forEach(function(shader){
-    THREE.ShaderChunk[ shader ] += require(`./shims/${type}/${shader}.glsl`);
+    THREE.ShaderChunk[ shader ] += '\n' + require(`./shims/${type}/${shader}.glsl`);
   })
 
   setShimmed(THREE, type);

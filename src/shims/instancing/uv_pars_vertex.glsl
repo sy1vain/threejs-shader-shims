@@ -1,4 +1,3 @@
-
 #ifdef INSTANCING
 
   #ifdef INSTANCING_USE_POSITION
@@ -15,7 +14,12 @@
     #else
       attribute vec3 instanceScale;
     #endif
-#endif
+  #endif
+
+  #ifdef INSTANCING_USE_COLOR
+    attribute vec3 instanceColor;
+    varying vec3 vInstanceColor;
+  #endif
 
 
   mat3 inverse(mat3 m) {
