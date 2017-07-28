@@ -30,16 +30,21 @@
   mat4 getInstanceMatrix(){
 
     vec4 q = instanceQuaternion;
-#ifdef INSTANCING_SCALING
-  #ifdef INSTANCING_UNIFORM_SCALING
-    vec3 s = vec3(instanceScale, instanceScale, instanceScale);
+  #ifdef INSTANCING_SCALING
+    #ifdef INSTANCING_UNIFORM_SCALING
+      vec3 s = vec3(instanceScale, instanceScale, instanceScale);
+    #else
+      vec3 s = instanceScale;
+    #endif
   #else
-    vec3 s = instanceScale;
+    vec3 s = vec3(1.,1.,1.);
   #endif
-#else
-  vec3 s = vec3(1,1,1);
-#endif
+
+  #ifdef INSTANCING_POSITION
     vec3 v = instancePosition;
+  #else
+    vec3 v = vec3(0.,0.,0.);
+  #endif
 
     vec3 q2 = q.xyz + q.xyz;
     vec3 a = q.xxx * q2.xyz;
