@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+    <script src="lib/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/stats.js/1.0.0/stats.min.js"></script>
+    <script src="../dist/shader-shims.js"></script>
+
+    <style>
+      html, body {
+        padding: 0; margin: 0;
+      }
+
+      #stats {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+</head>
+<body>
+
+  <script>
+
+    var MAX_INSTANCES = 50;
+    var DEFINES = {
+      INSTANCING: true,
+      INSTANCING_USE_POSITION: true,
+      INSTANCING_USE_SCALING: true,
+      INSTANCING_SCALING_IS_UNIFORM: true,
+      INSTANCING_USE_QUATERNION: true,
+      INSTANCING_USE_COLOR: true,
+    }
+
+
+    ShaderShims.instancing(THREE);
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 4 );
+    camera.position.z = 1;
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.shadowMap.enabled = true;
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    { //instanced shape
+      var geometry = new THREE.InstancedBufferGeometry();
+      geometry.copy(new THREE.DodecahedronBufferGeometry( 0.1 ));
+
+      geometry.maxInstancedCount = MAX_INSTANCES;
+
+      //positions
+      if(DEFINES.INSTANCING_USE_POSITION){
+        var positions = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES * 3 ), 3, 1 );
+        for ( var i = 0, ul = positions.count; i < ul; i++ ) {
+          positions.setXYZ(i, 2*Math.random()-1, 2*Math.random()-1, Math.random()-1);
+        }
+        geometry.addAttribute( 'instancePosition', positions );
+      }
+
+      if(DEFINES.INSTANCING_USE_SCALING){
+          if(DEFINES.INSTANCING_SCALING_IS_UNIFORM){
+            var scales = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES ), 1, 1 );
+            for ( var i = 0, ul = scales.count; i < ul; i++ ) {
+              scales.setX(i, Math.random());
+            }
+          }else{
+            var scales = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES * 3 ), 3, 1 );
+            for ( var i = 0, ul = scales.count; i < ul; i++ ) {
+              scales.setXYZ(i, Math.random(), Math.random(), Math.random());
+            }
+          }
+          geometry.addAttribute( 'instanceScale', scales );
+      }
+
+      if(DEFINES.INSTANCING_USE_QUATERNION){
+        var quaternions = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES * 4 ), 4, 1 );
+        var angles = [];
+        var q = new THREE.Quaternion();
+        for ( var i = 0, ul = quaternions.count; i < ul; i++ ) {
+          angles.push(2*Math.PI*Math.random());
+          q.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), angles[i] );
+          quaternions.setXYZW(i, q.x, q.y, q.z, q.w);
+        }
+        geometry.addAttribute( 'instanceQuaternion', quaternions );
+      }
+
+      if(DEFINES.INSTANCING_USE_COLOR){
+        var colors = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES * 3 ), 3, 1 );
+        for ( var i = 0, ul = colors.count; i < ul; i++ ) {
+          colors.setXYZ(i, Math.random(), Math.random(), Math.random());
+        }
+        geometry.addAttribute( 'instanceColor', colors );
+      }
+
+      var material = new THREE.MeshPhongMaterial( { color: (DEFINES.INSTANCING_USE_COLOR)?0xffffff:new THREE.Color('hsl(120,40,1)') } );
+
+      // by defining the correct defines, the matreial will use instancing
+      // using assign we re-use the original defiens, if any
+      material.defines = Object.assign({}, DEFINES, material.defines);
+
+
+      var mesh = new THREE.Mesh( geometry, material );
+      scene.add(mesh);
+
+      // we turn on shadows, but we need to tell the material to use instancing
+      // so we create custom materials for depth & distance and add the correct defines
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+
+      { // there are multiple ways to do this, but I find the the easiest
+        var depthMaterial = new THREE.MeshDepthMaterial({
+          depthPacking: THREE.RGBADepthPacking
+        });
+        depthMaterial.defines = Object.assign({}, DEFINES, depthMaterial.defines);
+        mesh.customDepthMaterial = depthMaterial;
+
+        // From version 0.86.x We can use this, for point lights only
+        var distanceMaterial = new THREE.MeshDistanceMaterial({
+    		});
+        distanceMaterial.defines = Object.assign({}, DEFINES, distanceMaterial.defines);
+        mesh.customDistanceMaterial = distanceMaterial;
+      }
+    }
+
+    { //backplane for shadows
+      var geometry = new THREE.PlaneGeometry( 2, 2 );
+      var material = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+      var mesh = new THREE.Mesh( geometry, material );
+      mesh.receiveShadow = true;
+      mesh.position.z = -1;
+      scene.add( mesh );
+    }
+
+
+    { //lights
+      var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 );
+      scene.add(ambientLight);
+
+      var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.6);
+      directionalLight.position.set( 0, 0, 2 );
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.set(1024, 1024);
+      scene.add( directionalLight );
+    }
+
+
+
+
+
+    var stats = new Stats();
+    document.body.appendChild( stats.domElement );
+
+    function update(){
+      if(quaternions){
+        var q = new THREE.Quaternion();
+        for ( var i = 0, ul = quaternions.count; i < ul; i++ ) {
+          angles[i] = angles[i] + 0.01;
+          q.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), angles[i] );
+          quaternions.setXYZW(i, q.x,q.y,q.z,q.w);
+        }
+        quaternions.needsUpdate = true;
+      }
+    }
+
+    function animate() {
+      update();
+
+    	requestAnimationFrame( animate );
+    	renderer.render( scene, camera );
+
+      this.stats.update()
+    }
+    animate();
+
+  </script>
+
+</body>
+</html>
