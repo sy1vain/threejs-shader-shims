@@ -96,7 +96,7 @@
         geometry.addAttribute( 'instanceColor', colors );
       }
 
-      var material = new THREE.MeshPhongMaterial( { color: (DEFINES.INSTANCING_USE_COLOR)?0xffffff:new THREE.Color('hsl(120,40,1)') } );
+      var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
       // by defining the correct defines, the matreial will use instancing
       // using assign we re-use the original defiens, if any
