@@ -65,12 +65,12 @@
           if(DEFINES.INSTANCING_SCALING_IS_UNIFORM){
             var scales = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES ), 1, 1 );
             for ( var i = 0, ul = scales.count; i < ul; i++ ) {
-              scales.setX(i, Math.random());
+              scales.setX(i, 0.8*Math.random() + 0.2);
             }
           }else{
             var scales = new THREE.InstancedBufferAttribute( new Float32Array( MAX_INSTANCES * 3 ), 3, 1 );
             for ( var i = 0, ul = scales.count; i < ul; i++ ) {
-              scales.setXYZ(i, Math.random(), Math.random(), Math.random());
+              scales.setXYZ(i, 0.8*Math.random() + 0.2, 0.8*Math.random() + 0.2, 0.8*Math.random() + 0.2);
             }
           }
           geometry.addAttribute( 'instanceScale', scales );
