@@ -3,8 +3,8 @@
   attribute vec3 instancePosition;
   attribute vec4 instanceQuaternion;
 
-#ifdef INSTANCING_SCALING
-  #ifdef INSTANCING_UNIFORM_SCALING
+#ifdef INSTANCING_USE_SCALING
+  #ifdef INSTANCING_SCALING_IS_UNIFORM
     attribute float instanceScale;
   #else
     attribute vec3 instanceScale;
@@ -30,8 +30,8 @@
   mat4 getInstanceMatrix(){
 
     vec4 q = instanceQuaternion;
-  #ifdef INSTANCING_SCALING
-    #ifdef INSTANCING_UNIFORM_SCALING
+  #ifdef INSTANCING_USE_SCALING
+    #ifdef INSTANCING_SCALING_IS_UNIFORM
       vec3 s = vec3(instanceScale, instanceScale, instanceScale);
     #else
       vec3 s = instanceScale;
@@ -40,7 +40,7 @@
     vec3 s = vec3(1.,1.,1.);
   #endif
 
-  #ifdef INSTANCING_POSITION
+  #ifdef INSTANCING_USE_POSITION
     vec3 v = instancePosition;
   #else
     vec3 v = vec3(0.,0.,0.);
