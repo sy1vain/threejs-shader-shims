@@ -1,9 +1,14 @@
 export function all(THREE){
   instancing(THREE);
+  matcap(THREE);
 }
 
 export function instancing(THREE){
   shim(THREE, 'instancing');
+}
+
+export function matcap(THREE){
+  shim(THREE, 'matcap');
 }
 
 function isShimmed(THREE, type){
