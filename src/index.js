@@ -23,7 +23,7 @@ function shim(THREE, type, shaders){
 
   shaders.forEach(function(shader){
     try {
-      THREE.ShaderChunk[ shader ] += '\n' + require(`./shims/${type}/${shader}.glsl`);
+      THREE.ShaderChunk[ shader ] = require(`./shims/${type}/${shader}.glsl`).replace('{shader}', THREE.ShaderChunk[ shader ]);
     }catch(e){}
   })
 
