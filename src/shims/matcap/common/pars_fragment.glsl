@@ -17,9 +17,7 @@
       vec2 matcapUv = vMatCapUv;
     #endif
 
-
-    vec4 c = texture2D( map, matcapUv );
-    return mapTexelToLinear( c );
+    return texture2D( map, matcapUv );
   }
 
 #endif
