@@ -1,5 +1,5 @@
-#if defined(MATCAP) && !defined(INSTANCING_PARS_FRAGMENT)
-  #define INSTANCING_PARS_FRAGMENT
+#if defined(MATCAP) && !defined(MATCAP_PARS_FRAGMENT)
+  #define MATCAP_PARS_FRAGMENT
 
   #ifdef MATCAP_USE_PHONG
     varying vec3 vMatCapEye;
