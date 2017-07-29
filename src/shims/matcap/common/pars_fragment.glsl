@@ -8,7 +8,7 @@
     varying vec2 vMatCapUv;
   #endif
 
-  vec4 matcapSampleColor(){
+  vec4 matcapSampleColor(sampler2D map){
     #ifdef MATCAP_USE_PHONG
       vec3 r = reflect( vMatCapEye, vMatCapNormal );
       float m = 2. * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );
