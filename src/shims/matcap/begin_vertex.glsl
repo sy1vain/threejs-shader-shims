@@ -1,4 +1,4 @@
 {shader}
 #if defined( MATCAP ) && defined ( USE_MAP )
-  calculateMatCapNormalEye();
+  calculateMatCapNormalEye(transformed, modelViewMatrix, objectNormal, normalMatrix);
 #endif

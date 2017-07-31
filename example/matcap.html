@@ -26,8 +26,9 @@
   <script>
 
     var DEFINES = {
-      MATCAP: true,
-      MATCAP_USE_PHONG: true,
+      MATCAP: '',
+      // MATCAP_USE_PHONG: '',
+      USE_ENVMAP: '' //fix for default material
     }
 
 
@@ -47,7 +48,7 @@
 
       var texture = new THREE.TextureLoader().load( MATCAP_TEXTURES.copper );
 
-      var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture } );
+      var material = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texture } );
       material.defines = Object.assign({}, DEFINES, material.defines);
 
       // material = new THREE.MeshNormalMaterial();

@@ -4,8 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
     <script src="lib/three.min.js"></script>
+    <script src="lib/BufferSubdivisionModifier.js"></script>
     <script src="https://cdn.jsdelivr.net/stats.js/1.0.0/stats.min.js"></script>
     <script src="../dist/shader-shims.js"></script>
+    <script src="js/matcap_textures.js"></script>
 
     <style>
       html, body {
@@ -23,18 +25,23 @@
 
   <script>
 
-    var MAX_INSTANCES = 250;
+    var MAX_INSTANCES = 25;
     var DEFINES = {
       INSTANCING: '',
       INSTANCING_USE_POSITION: '',
       INSTANCING_USE_SCALING: '',
       INSTANCING_SCALING_IS_UNIFORM: '',
       INSTANCING_USE_QUATERNION: '',
-      INSTANCING_USE_COLOR: '',
+      // INSTANCING_USE_COLOR: '',
+
+      MATCAP: '',
+      // MATCAP_USE_PHONG: '',
+      USE_ENVMAP: '' //fix for default material
     }
 
 
     ShaderShims.instancing(THREE);
+    ShaderShims.matcap(THREE);
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 4 );
@@ -48,9 +55,12 @@
 
     { //instanced shape
       var geometry = new THREE.InstancedBufferGeometry();
-      geometry.copy(new THREE.DodecahedronBufferGeometry( 0.1 ));
+      var shape = new THREE.BoxGeometry( 0.2, 0.2, 0.2, 10, 10, 10 );
+      shape = new THREE.BufferSubdivisionModifier(2).modify(shape);
+      geometry.copy( shape );
 
       geometry.maxInstancedCount = MAX_INSTANCES;
+
 
       //positions
       if(DEFINES.INSTANCING_USE_POSITION!==undefined){
@@ -96,12 +106,14 @@
         geometry.addAttribute( 'instanceColor', colors );
       }
 
+      var texture = new THREE.TextureLoader().load( MATCAP_TEXTURES.black );
+
       // The following shaders (mostly) work)
       // var material = new THREE.MeshBasicMaterial( {} );
       // var material = new THREE.MeshDepthMaterial( {} );
       // var material = new THREE.MeshDistanceMaterial( {} );
-      var material = new THREE.MeshLambertMaterial( {} );
-      // var material = new THREE.MeshNormalMaterial( {} );
+      var material = new THREE.MeshBasicMaterial( {map: texture} );
+      // var material = new THREE.MeshNormalMaterial( {map: texture} );
       // var material = new THREE.MeshPhongMaterial( {} );
       // var material = new THREE.MeshPhysicalMaterial( {} );
       // var material = new THREE.MeshStandardMaterial( {} );
@@ -146,7 +158,7 @@
       var mesh = new THREE.Mesh( geometry, material );
       mesh.receiveShadow = true;
       mesh.position.z = -1;
-      scene.add( mesh );
+      // scene.add( mesh );
     }
 
 
@@ -178,7 +190,7 @@
       if(quaternions){
         var q = new THREE.Quaternion();
         for ( var i = 0, ul = quaternions.count; i < ul; i++ ) {
-          angles[i] = angles[i] + 0.01;
+          angles[i] = angles[i] + 0.003;
           q.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), angles[i] );
           quaternions.setXYZW(i, q.x,q.y,q.z,q.w);
         }

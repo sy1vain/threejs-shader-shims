@@ -8,7 +8,7 @@
     varying vec2 vMatCapUv;
   #endif
 
-  void calculateMatCapNormalEye(){
+  void calculateMatCapNormalEye(vec3 position, mat4 modelViewMatrix, vec3 normal, mat3 normalMatrix){
     vec3 e = normalize( vec3( modelViewMatrix * vec4( position, 1. ) ) );
     vec3 n = normalize( normalMatrix * normal );
 
