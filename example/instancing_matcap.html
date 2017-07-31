@@ -48,6 +48,7 @@
     camera.position.z = 1;
 
     var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setClearColor( 0x101010 );
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize( window.innerWidth, window.innerHeight );

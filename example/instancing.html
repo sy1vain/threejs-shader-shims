@@ -81,8 +81,8 @@
         var angles = [];
         var q = new THREE.Quaternion();
         for ( var i = 0, ul = quaternions.count; i < ul; i++ ) {
-          angles.push(2*Math.PI*Math.random());
-          q.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), angles[i] );
+          angles.push(new THREE.Euler( 2*Math.PI*Math.random(), 2*Math.PI*Math.random(), 2*Math.PI*Math.random() ));
+          q.setFromEuler( angles[i] );
           quaternions.setXYZW(i, q.x, q.y, q.z, q.w);
         }
         geometry.addAttribute( 'instanceQuaternion', quaternions );
@@ -175,11 +175,14 @@
     }, false );
 
     function update(){
-      if(quaternions){
+      if(DEFINES.INSTANCING_USE_QUATERNION!==undefined){
         var q = new THREE.Quaternion();
         for ( var i = 0, ul = quaternions.count; i < ul; i++ ) {
-          angles[i] = angles[i] + 0.01;
-          q.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), angles[i] );
+          var euler = angles[i];
+          euler.x += 0.01;
+          euler.y += 0.007;
+          euler.z += 0.008;
+          q.setFromEuler( euler );
           quaternions.setXYZW(i, q.x,q.y,q.z,q.w);
         }
         quaternions.needsUpdate = true;
